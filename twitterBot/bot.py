@@ -18,7 +18,7 @@ import praw
 
 from newsapi import NewsApiClient
 
-news_api = NewsApiClient(api_key='6e1b033316554b1aaaea446f2d39bb26')
+news_api = NewsApiClient(api_key=open('newsapi_key', 'r').read())
 
 
 def connect_app_to_twitter(config):
@@ -29,7 +29,7 @@ def connect_app_to_twitter(config):
 
 
 def ask_openai(prompt):
-    key = "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"
+    key = open('openai_key', 'r').read()
     openai.api_key = key
 
     #    prompt = "write a fascinated tweet on a newly tested ai service for bitcoin price discovery"
