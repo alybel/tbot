@@ -29,6 +29,7 @@ def connect_app_to_twitter(config):
 
 
 def ask_openai(prompt):
+    print(prompt)
     key = open('openai_key', 'r').read()
     openai.api_key = key
 
