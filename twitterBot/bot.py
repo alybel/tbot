@@ -222,7 +222,8 @@ class Bot(object):
         hashtags = ' #' + ' #'.join([random.choice(self.hashtags) for i in range(2)])
 
         answer_text = ask_openai(
-            'write a smart and fun twitter reply with three hashtags to the following tweet: %s' % tweet['text'])
+            'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' %
+            tweet['text'])
         try:
             # reply = random.choice(answers) + ' #%s' % keyword + hashtags
             self.api.update_status(status=answer_text,
@@ -414,7 +415,7 @@ class Bot(object):
                 if title in book_df['action2'].values:
                     continue
                 tweet_with_no_link = ask_openai(
-                    'Write an inspiring tweet based on the following text: %s' % content)
+                    'Write a smart and thoughtful tweet for me with a maximum of three very common hashtags based on the following text: %s' % content)
 
                 self.post_on_reddit(title=title, text=url)
 
@@ -558,7 +559,7 @@ class Bot(object):
                     return
                 try:
                     answer_text = ask_openai(
-                        'write a smart and fun twitter reply with three hashtags to the following tweet: %s' % element.text)
+                        'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % element.text)
                     self.api.update_status(status=answer_text,
                                            in_reply_to_status_id=element.id,
                                            auto_populate_reply_metadata=True)
