@@ -526,7 +526,10 @@ class Bot(object):
                     ):
                 count += 1
                 print('remove ', follower.screen_name)
-                self.api.create_block(screen_name=follower.screen_name)
+                try:
+                    self.api.create_block(screen_name=follower.screen_name)
+                except Exception as e:
+                    print(e)
                 time.sleep(3)
                 if count >= 10:
                     break
