@@ -38,7 +38,7 @@ def ask_openai(prompt):
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
-        temperature=0.6,
+        temperature=0.3,
         max_tokens=60
     )
     return response.choices[0]['text']
