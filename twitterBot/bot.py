@@ -538,10 +538,14 @@ class Bot(object):
         random.shuffle(self.friends)
         for friend in self.friends:
             print("Taking care of friend", friend)
-            user = self.api.get_user(screen_name=friend)
             try:
+                user = self.api.get_user(screen_name=friend)
                 timeline = self.api.user_timeline(screen_name=friend)
             except tweepy.errors.Unauthorized:
+                # e.g. if the user doesn't allow to read the timeline
+                continue
+            except tweepy.errors.Forbidden:
+                # e.g. if the user doesn't exist any more
                 continue
             random.shuffle(timeline)
             count = 0
