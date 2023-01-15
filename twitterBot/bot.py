@@ -10,8 +10,6 @@ from datetime import timedelta
 import pytz
 import time
 import random
-import functools
-import cleantext
 import requests
 import openai
 import praw
@@ -38,10 +36,13 @@ def ask_openai(prompt):
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
-        temperature=0.3,
+        temperature=0.2,
         max_tokens=60
     )
-    return response.choices[0]['text']
+    answer_text = response.choices[0]['text']
+    if "we" in answer_text:
+        return None
+    return answer_text
 
 
 def api_check_sentiment(text):
@@ -461,33 +462,36 @@ class Bot(object):
                 print('Exception in get_current_content')
                 print(e)
                 return -1
-            for tweet in scraper.get_items():
-                if self.is_tweet_blocked_by_blacklist(tweet):
-                    continue
-                if self.is_blocked_by_actuality(tweet):
-                    continue
-                if self.is_blocked_by_content(tweet):
-                    continue
-                # Filter out tweets with images or videos
-                if tweet.media is not None:
-                    continue
-                if keyword.lower() not in tweet.content.lower():
-                    continue
-                tweets.append({
-                    'keyword': keyword,
-                    'date': tweet.date,
-                    'text': tweet.content,
-                    'username': tweet.user.username,
-                    'tweet_id': tweet.id,
-                    'user_description': tweet.user.description,
-                    'user_followers': tweet.user.followersCount,
-                    'user_id': tweet.user.id,
-                    'user_obj': tweet.user,
-                    'tweet_url': tweet.url
-                })
-                count += 1
-                if count >= limit:
-                    break
+            try:
+                for tweet in scraper.get_items():
+                    if self.is_tweet_blocked_by_blacklist(tweet):
+                        continue
+                    if self.is_blocked_by_actuality(tweet):
+                        continue
+                    if self.is_blocked_by_content(tweet):
+                        continue
+                    # Filter out tweets with images or videos
+                    if tweet.media is not None:
+                        continue
+                    if keyword.lower() not in tweet.content.lower():
+                        continue
+                    tweets.append({
+                        'keyword': keyword,
+                        'date': tweet.date,
+                        'text': tweet.content,
+                        'username': tweet.user.username,
+                        'tweet_id': tweet.id,
+                        'user_description': tweet.user.description,
+                        'user_followers': tweet.user.followersCount,
+                        'user_id': tweet.user.id,
+                        'user_obj': tweet.user,
+                        'tweet_url': tweet.url
+                    })
+                    count += 1
+                    if count >= limit:
+                        break
+            except Exception as e:
+                print(e)
         if len(tweets) == 0:
             return -1
 
