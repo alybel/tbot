@@ -385,6 +385,8 @@ class Bot(object):
                     print('News collection for keyword "%s" not successful' % keyword)
 
             for i, pub in self.news[keyword]['news'].sample(frac=1).iterrows():
+                if pub is None:
+                    continue
                 content = pub['content'].lower()
                 description = pub['description'].lower()
                 title = pub['title'][:240]
