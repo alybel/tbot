@@ -385,7 +385,7 @@ class Bot(object):
                     print('News collection for keyword "%s" not successful' % keyword)
 
             for i, pub in self.news[keyword]['news'].sample(frac=1).iterrows():
-                if pub is None:
+                if pub is None or pub['content'] is None or pub['description'] is None:
                     continue
                 content = pub['content'].lower()
                 description = pub['description'].lower()
@@ -552,6 +552,9 @@ class Bot(object):
                 continue
             except tweepy.errors.Forbidden:
                 # e.g. if the user doesn't exist any more
+                continue
+            except Exception as e:
+                print(e)
                 continue
             random.shuffle(timeline)
             count = 0
