@@ -13,10 +13,37 @@ import random
 import requests
 import openai
 import praw
+import functools
 
 from newsapi import NewsApiClient
 
 news_api = NewsApiClient(api_key=open('newsapi_key', 'r').read())
+
+
+def try_repeated(n, sleep):
+    def repeated(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            r = None
+            count = 0
+            while count < n:
+                try:
+                    r = func(*args, **kwargs)
+                    if r is not None:
+                        break
+                    if r is None:
+                        raise Exception('None was returned')
+                except Exception as e:
+                    if count == n - 1:
+                        raise e
+                    else:
+                        time.sleep(sleep)
+                count += 1
+            return r
+
+        return wrapper
+
+    return repeated
 
 
 def connect_app_to_twitter(config):
@@ -26,6 +53,7 @@ def connect_app_to_twitter(config):
     return api
 
 
+@try_repeated(5, 10)
 def ask_openai(prompt):
     print(prompt)
     key = open('openai_key', 'r').read()
