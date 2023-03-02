@@ -70,6 +70,9 @@ def ask_openai(prompt):
     answer_text = response.choices[0]['text']
     if "we" in answer_text:
         return None
+
+    if "I " in answer_text:
+        return None
     return answer_text
 
 
@@ -250,9 +253,13 @@ class Bot(object):
 
         hashtags = ' #' + ' #'.join([random.choice(self.hashtags) for i in range(2)])
 
-        answer_text = ask_openai(
-            'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' %
-            tweet['text'])
+        try:
+            answer_text = ask_openai(
+                'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' %
+                tweet['text'])
+        except:
+            # This case occurs when chatgpt does not produce an answer
+            return
         try:
             # reply = random.choice(answers) + ' #%s' % keyword + hashtags
             self.api.update_status(status=answer_text,
@@ -445,8 +452,12 @@ class Bot(object):
                 # check if this news was already tweeted
                 if title in book_df['action2'].values:
                     continue
-                tweet_with_no_link = ask_openai(
-                    'Write a smart and thoughtful tweet for me with a maximum of three very common hashtags based on the following text: %s' % content)
+                try:
+                    tweet_with_no_link = ask_openai(
+                        'Write a smart and thoughtful tweet for me with a maximum of three very common hashtags based on the following text: %s' % content)
+                except:
+                    # This case occurs when ChatGPT return None
+                    return
 
                 self.post_on_reddit(title=title, text=url)
 
@@ -602,8 +613,12 @@ class Bot(object):
                     print('Count over 5 was achieded')
                     return
                 try:
-                    answer_text = ask_openai(
-                        'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % element.text)
+                    try:
+                        answer_text = ask_openai(
+                            'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % element.text)
+                    except:
+                        # this case occurs when chatgpt returns None
+                        return None
                     self.api.update_status(status=answer_text,
                                            in_reply_to_status_id=element.id,
                                            auto_populate_reply_metadata=True)
