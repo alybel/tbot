@@ -255,7 +255,7 @@ class Bot(object):
 
         try:
             answer_text = ask_openai(
-                'schreibe eine intelligente Anwtort mit maximal 2 hashtags für mich auf deutsch für den folgenden Tweet: %s' %
+                'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' %
                 tweet['text'])
         except:
             # This case occurs when chatgpt does not produce an answer
@@ -454,7 +454,7 @@ class Bot(object):
                     continue
                 try:
                     tweet_with_no_link = ask_openai(
-                        'Schreibe eine kurze und intelligente Zusammenfassung als Tweet auf deutsch mit maximal 3 Hashtags für den folgenden Text: %s' % content)
+                        'Write a smart and thoughtful tweet for me with a maximum of three very common hashtags based on the following text: %s' % content)
                 except:
                     # This case occurs when ChatGPT return None
                     return
@@ -615,7 +615,7 @@ class Bot(object):
                 try:
                     try:
                         answer_text = ask_openai(
-                            'Schreibe eine intelligente Antwort auf deutsch mit maximal 2 häufigen Hashtags für den folgenden Tweet: %s' % element.text)
+                            'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % element.text)
                     except:
                         # this case occurs when chatgpt returns None
                         return None
