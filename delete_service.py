@@ -30,7 +30,7 @@ for page in tweepy.Cursor(bot.api.get_friends,
                 time.sleep(10 * 60 + random.randint(100, 500))
 
                 if random.randint(1, 4) == 4:
-                    time.sleep(60 * 60)
+                    time.sleep(50 * 60 + random.randint(0, 600))
 
             except Exception as e:
                 print(e)

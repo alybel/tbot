@@ -61,13 +61,14 @@ def ask_openai(prompt):
 
     #    prompt = "write a fascinated tweet on a newly tested ai service for bitcoin price discovery"
 
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        # prompt=prompt,
         temperature=0.2,
+        messages=[{"role": "user", "content": prompt}],
         max_tokens=60
     )
-    answer_text = response.choices[0]['text']
+    answer_text = response['choices'][0]['message']['content']
     if "we" in answer_text:
         return None
 
@@ -132,6 +133,7 @@ class Bot(object):
     def __init__(self, config):
         self.config = config
         self.account_name = self.config.get('DEFAULT', 'account_name')
+        self.bot_language = 'DE'
         self.blacklist = json.loads(self.config.get('DEFAULT', 'blacklist'))
         self.keywords = json.loads(self.config.get('DEFAULT', 'keywords'))
         self.keywords = [x.lower() for x in self.keywords]
@@ -254,9 +256,11 @@ class Bot(object):
         hashtags = ' #' + ' #'.join([random.choice(self.hashtags) for i in range(2)])
 
         try:
-            answer_text = ask_openai(
-                'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' %
-                tweet['text'])
+            q_eng = 'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % \
+                    tweet['text']
+            q_de = 'schreibe eine intelligente Antwort auf deutsch mit maximal drei hashtags für den folgenden Tweet: %s' % \
+                   tweet['text']
+            answer_text = ask_openai(q_de if self.bot_language == 'DE' else q_eng)
         except:
             # This case occurs when chatgpt does not produce an answer
             return
@@ -453,8 +457,9 @@ class Bot(object):
                 if title in book_df['action2'].values:
                     continue
                 try:
-                    tweet_with_no_link = ask_openai(
-                        'Write a smart and thoughtful tweet for me with a maximum of three very common hashtags based on the following text: %s' % content)
+                    q_eng = 'Write a smart and thoughtful tweet for me with a maximum of three very common hashtags based on the following text: %s' % content
+                    q_de = 'Schreibe einen intelligenten Tweet mit maximal drei häufigen hastags für den folgenden Text: %s' % content
+                    tweet_with_no_link = ask_openai(q_de if self.bot_language == 'DE' else q_eng)
                 except:
                     # This case occurs when ChatGPT return None
                     return
@@ -614,8 +619,9 @@ class Bot(object):
                     return
                 try:
                     try:
-                        answer_text = ask_openai(
-                            'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % element.text)
+                        q_eng = 'write a smart and thoughtful twitter reply for me with a maximum of three very common hashtags to the following tweet: %s' % element.text
+                        q_de = 'schreibe eine intelligente Antwort auf deutsch mit maximal drei hashtags für den folgenden Tweet: %s' % element.text
+                        answer_text = ask_openai(q_de if self.bot_language == 'DE' else q_eng)
                     except:
                         # this case occurs when chatgpt returns None
                         return None
